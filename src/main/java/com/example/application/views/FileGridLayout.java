@@ -1,35 +1,43 @@
 package com.example.application.views;
 
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.selection.SingleSelect;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class FileGridLayout extends HorizontalLayout {
     private final Path ROOT;
     Grid<Path> packageGrid = new Grid<>();
     Grid<Path> fileGrid = new Grid<>();
     PackagesForm packagesForm = new PackagesForm();
+    UploadComponent uploadComponent = new UploadComponent();
 
     FileGridLayout(Path ROOT) {
         this.ROOT = ROOT;
         setWidth("100%");
         customizePackageGrid(ROOT);
         add(packageGrid);
+        customizeFileGrid();
         add(fileGrid);
 
         //    adding and configuration of package form
         configurePackagesForm();
-        add(packagesForm);
+        add(combineTwoButtonComponents());
+//        add(packagesForm);
+    }
+
+    private Component combineTwoButtonComponents() {
+        VerticalLayout layout = new VerticalLayout(packagesForm, uploadComponent);
+        layout.setMaxWidth("500px");
+        return layout;
     }
 
     private void configurePackagesForm() {
@@ -44,6 +52,7 @@ public class FileGridLayout extends HorizontalLayout {
             e.printStackTrace();
         }
         customizePackageGrid(ROOT);
+        customizeFileGrid();
     }
 
     private void create(PackagesForm.AddEvent event) {
@@ -55,8 +64,10 @@ public class FileGridLayout extends HorizontalLayout {
             e.printStackTrace();
         }
         customizePackageGrid(ROOT);
+
     }
 
+    //  initial settings of tables
     private void customizePackageGrid(Path root) {
         packageGrid.removeAllColumns();
         upgradePackagesGrid();
@@ -67,7 +78,14 @@ public class FileGridLayout extends HorizontalLayout {
             upgradeFileGrid(selectedFile);
         });
         packageGrid.asSingleSelect().addValueChangeListener(event -> editPackage(event.getValue()));
+        packageGrid.asSingleSelect().addValueChangeListener(event -> uploadComponent.setROOT(event.getValue()));
     }
+
+    private void customizeFileGrid() {
+        fileGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
+        fileGrid.asSingleSelect().addValueChangeListener(event -> editPackage(event.getValue()));
+    }
+    //*****
 
     private void editPackage(Path value) {
         packagesForm.setPath(value);
@@ -94,4 +112,5 @@ public class FileGridLayout extends HorizontalLayout {
                 e.printStackTrace();
             }
     }
+
 }

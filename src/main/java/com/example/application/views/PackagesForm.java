@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -26,13 +27,14 @@ public class PackagesForm extends FormLayout {
         binder.readBean(path);
     }
 
-
-
     public PackagesForm() {
         add(createEditingLayout());
     }
 
     private Component createEditingLayout() {
+        addPackageButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        deletePackageButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
         addPackageButton.addClickListener(event -> fireEvent(new AddEvent(this, path)));
         deletePackageButton.addClickListener(event -> fireEvent(new DeleteEvent(this, path)));
         return new HorizontalLayout(textField, addPackageButton, deletePackageButton);
