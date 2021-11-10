@@ -12,20 +12,18 @@ import com.vaadin.flow.router.Route;
 import java.io.File;
 import java.util.Comparator;
 
-/*
- *   My class for testing vaadin components
- */
-
-@Route("/tree")
+@Route("")
 public class TreeGridView extends VerticalLayout {
     private final File ROOT = new File("src/main/resources/file-storage");
     FileSystemDataProvider dataProvider = new FileSystemDataProvider(ROOT);
     TreeGrid<File> treeGrid = new TreeGrid(dataProvider);
-    UploadComponent uploadComponent = new UploadComponent(() -> System.out.println("Listener in constructor from tree class."));
+    UploadComponentTree uploadComponent = new UploadComponentTree(() -> upgradeGrid());
+    FileDataForm fileDataForm = new FileDataForm(() -> upgradeGrid());
 
     public TreeGridView() {
         add(customizeGrid());
         add(uploadComponent);
+        add(fileDataForm);
     }
 
     private TreeGrid<File> customizeGrid() {
@@ -41,22 +39,30 @@ public class TreeGridView extends VerticalLayout {
                     return htmlIcon;
                 }).setHeader("Type")
                 .setSortable(true)
-                .setComparator(Comparator.comparing(File::isDirectory));
+                .setComparator(Comparator.comparing(File::isDirectory))
+                .setWidth("10em")
+                .setFlexGrow(0);
         treeGrid.addHierarchyColumn(File::getName)
                 .setHeader("File name")
                 .setSortable(true)
                 .setComparator((f1, f2) -> f1.getName().compareToIgnoreCase(f2.getName()));
         treeGrid.addColumn(file -> file.isDirectory() ? "--" : file.length() + " bytes")
-                .setHeader("length");
+                .setHeader("Length");
         treeGrid.asSingleSelect().setEnabled(true);
 
         treeGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         SingleSelect<Grid<File>, File> singleSelect = treeGrid.asSingleSelect();
         var element = singleSelect.addValueChangeListener(e -> {
-           File selectedFile = e.getValue();
-           System.out.println("Selected file: " + selectedFile.getName());
+            File selectedFile = e.getValue();
+            String path = selectedFile.getParent() + "/" + selectedFile.getName();
+            uploadComponent.setPath(path);
+            fileDataForm.setSelectedFile(path);
+            System.out.println("Selected file: " + selectedFile.getParent() + " " + selectedFile.getName());
         });
         return treeGrid;
     }
 
+    public void upgradeGrid() {
+        treeGrid.getDataProvider().refreshAll();
+    }
 }

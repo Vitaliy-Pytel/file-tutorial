@@ -19,7 +19,7 @@ public class FileGridLayout extends HorizontalLayout {
 
     FileGridLayout(Path ROOT) {
         this.ROOT = ROOT;
-        uploadComponent = new UploadComponent(() -> upgradeGrids(ROOT));
+        uploadComponent = new UploadComponent(() -> fileGrid.getDataProvider().refreshAll());
         setWidth("100%");
         customizePackageGrid();
         add(packageGrid);

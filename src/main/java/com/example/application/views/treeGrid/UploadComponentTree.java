@@ -1,4 +1,4 @@
-package com.example.application.views;
+package com.example.application.views.treeGrid;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -11,16 +11,16 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class UploadComponent extends FormLayout {
-
+public class UploadComponentTree extends FormLayout {
     private Path rootDirectory = Path.of("src/main/resources/file-storage");
 
     MemoryBuffer memoryBuffer = new MemoryBuffer();
     Upload upload = new Upload(memoryBuffer);
     Button uploadButton = new Button("Upload file");
-    SuccessEvent successEvent;
+    String path;
+    AddPackageEvent successEvent;
 
-    public UploadComponent(SuccessEvent successEvent) {
+    public UploadComponentTree(AddPackageEvent successEvent) {
         this.successEvent = successEvent;
         customizeUpload();
         add(upload);
@@ -32,7 +32,7 @@ public class UploadComponent extends FormLayout {
         upload.setUploadButton(uploadButton);
         upload.addFinishedListener(e -> {
             writeFile(memoryBuffer.getInputStream(), e.getFileName());
-            successEvent.uploadFinished();
+            successEvent.updateGrid();
         });
 //        upload.addSucceededListener(event -> successEvent.uploadFinished());
 
@@ -40,9 +40,9 @@ public class UploadComponent extends FormLayout {
 
     private void writeFile(InputStream inputStream, String fileName) {
         Path newFile = null;
-        System.out.println(rootDirectory.toString());
+        System.out.println(path);
         try {
-            newFile = Files.createFile(Path.of(rootDirectory + "/" + fileName));
+            newFile = Files.createFile(Path.of(path + "/" + fileName));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -56,5 +56,9 @@ public class UploadComponent extends FormLayout {
 
     public void setRootDirectory(Path rootDirectory) {
         this.rootDirectory = rootDirectory;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

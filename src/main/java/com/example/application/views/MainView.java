@@ -5,10 +5,10 @@ import com.vaadin.flow.router.Route;
 
 import java.nio.file.Path;
 
-@Route("")
+@Route("/first")
 public class MainView extends VerticalLayout {
 //    private final Path ROOT= Path.of("/home/vitaliy/Загрузки/");
-    private static final Path ROOT = Path.of("src/main/resources/file-storage/");
+    public static final Path ROOT = Path.of("src/main/resources/file-storage/");
     FileGridLayout fileGrid = new FileGridLayout(ROOT);
     public MainView() {
         add(fileGrid);
