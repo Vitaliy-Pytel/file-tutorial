@@ -1,5 +1,5 @@
 package com.example.application.views.treeGrid;
 
-public interface AddPackageEvent {
+public interface AddEvent {
     void updateGrid();
 }

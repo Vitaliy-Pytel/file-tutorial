@@ -65,4 +65,5 @@ public class TreeGridView extends VerticalLayout {
     public void upgradeGrid() {
         treeGrid.getDataProvider().refreshAll();
     }
+
 }

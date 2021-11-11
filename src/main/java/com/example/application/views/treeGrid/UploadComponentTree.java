@@ -12,15 +12,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class UploadComponentTree extends FormLayout {
-    private Path rootDirectory = Path.of("src/main/resources/file-storage");
-
     MemoryBuffer memoryBuffer = new MemoryBuffer();
     Upload upload = new Upload(memoryBuffer);
     Button uploadButton = new Button("Upload file");
     String path;
-    AddPackageEvent successEvent;
+    AddEvent successEvent;
 
-    public UploadComponentTree(AddPackageEvent successEvent) {
+    public UploadComponentTree(AddEvent successEvent) {
         this.successEvent = successEvent;
         customizeUpload();
         add(upload);
@@ -30,32 +28,30 @@ public class UploadComponentTree extends FormLayout {
         upload.setSizeUndefined();
         upload.setVisible(true);
         upload.setUploadButton(uploadButton);
-        upload.addFinishedListener(e -> {
+        upload.addSucceededListener(e -> {
             writeFile(memoryBuffer.getInputStream(), e.getFileName());
             successEvent.updateGrid();
         });
-//        upload.addSucceededListener(event -> successEvent.uploadFinished());
-
     }
 
     private void writeFile(InputStream inputStream, String fileName) {
         Path newFile = null;
         System.out.println(path);
-        try {
-            newFile = Files.createFile(Path.of(path + "/" + fileName));
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        if (path == null) {
+            new ErrorNotification();
+        } else {
+            try {
+                newFile = Files.createFile(Path.of(path + "/" + fileName));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            try (FileOutputStream outputStream = new FileOutputStream(String.valueOf(newFile))) {
+                byte[] bytes = inputStream.readAllBytes();
+                outputStream.write(bytes);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
-        try (FileOutputStream outputStream = new FileOutputStream(String.valueOf(newFile))){
-            byte[] bytes = inputStream.readAllBytes();
-            outputStream.write(bytes);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void setRootDirectory(Path rootDirectory) {
-        this.rootDirectory = rootDirectory;
     }
 
     public void setPath(String path) {
