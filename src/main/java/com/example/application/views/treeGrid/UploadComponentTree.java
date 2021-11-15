@@ -51,6 +51,7 @@ public class UploadComponentTree extends FormLayout {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+            path = null;
         }
     }
 
