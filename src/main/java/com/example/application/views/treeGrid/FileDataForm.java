@@ -2,12 +2,9 @@ package com.example.application.views.treeGrid;
 
 import com.example.application.views.MainView;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.theme.Theme;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,8 +36,9 @@ public class FileDataForm extends FormLayout {
 //        deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
         createButton.addClickListener(click -> {
+            String root = getRoot(selectedFile);
             try {
-                Files.createDirectory(Path.of(MainView.ROOT + "/" + textField.getValue()));
+                Files.createDirectory(Path.of(root + "/" + textField.getValue()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -63,6 +61,11 @@ public class FileDataForm extends FormLayout {
             file.renameTo(newFile);
             addEvent.updateGrid();
         });
+    }
+
+    private String getRoot(String selectedFile) {
+        return selectedFile == null ? String.valueOf(MainView.ROOT) : selectedFile;
+
     }
 
     public void setSelectedFile(String selectedFile) {

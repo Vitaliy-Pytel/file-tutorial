@@ -48,6 +48,7 @@ build/
 bin/
 deploy/
 META-INF/
+file-storage/
 
 
 ######################
