@@ -9,6 +9,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.selection.SingleSelect;
+import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.dom.ElementFactory;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -40,8 +42,6 @@ public class TreeGridView extends VerticalLayout {
                 .setHeader("Length");
         treeGrid.asSingleSelect().setEnabled(true);
 
-        treeGrid.getElement().getStyle().set("my-style", null);
-
         treeGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         SingleSelect<Grid<File>, File> singleSelect = treeGrid.asSingleSelect();
         var element = singleSelect.addValueChangeListener(e -> {
@@ -51,6 +51,8 @@ public class TreeGridView extends VerticalLayout {
             fileDataForm.setSelectedFile(path);
             System.out.println("Selected file: " + selectedFile.getParent() + " " + selectedFile.getName());
         });
+        treeGrid.addExpandListener(event -> upgradeGrid());
+        treeGrid.addCollapseListener(event -> upgradeGrid());
         return treeGrid;
     }
 
@@ -59,12 +61,13 @@ public class TreeGridView extends VerticalLayout {
     }
 
     private HorizontalLayout concatFileNameWithItem(File file) {
+
         Icon htmlIcon;
         if (file.isDirectory()) {
-            htmlIcon = VaadinIcon.FOLDER_O.create();
+            htmlIcon = treeGrid.isExpanded(file) ? VaadinIcon.FOLDER_OPEN.create() : VaadinIcon.FOLDER.create();
             htmlIcon.setColor("orange");
         } else {
-            htmlIcon = VaadinIcon.FILE_O.create();
+            htmlIcon = VaadinIcon.FILE.create();
             htmlIcon.setColor("red");
         }
         String fileName = file.getName();
