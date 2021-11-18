@@ -2,6 +2,7 @@ package com.example.application.views.treeGrid;
 
 import com.example.application.views.MainView;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -11,8 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-//@CssImport(value = "./styles/specific-styles.css",
-//        include = "common-styles")
+@CssImport(value = "./styles/shared-styles.css")
 public class FileDataForm extends FormLayout {
     TextField textField = new TextField();
     Button createButton = new Button("Create");
@@ -30,6 +30,9 @@ public class FileDataForm extends FormLayout {
 
     private void config(AddEvent addEvent) {
         textField.setPlaceholder("Enter package name");
+        createButton.getClassNames().set("my-style1", true);
+        deleteButton.getClassNames().set("my-style2", true);
+        renameButton.getClassNames().set("my-style3", true);
 
 //        createButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 //        renameButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);

@@ -1,5 +1,6 @@
 package com.example.application.views.treeGrid;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
@@ -19,7 +20,7 @@ import java.io.File;
 
 @Route("")
 @Theme(value = Lumo.class, variant = Lumo.DARK)
-@CssImport(value = "styles/shared-styles.css", id = "my-style")
+//@CssImport(value = "./styles/shared-styles.css")
 public class TreeGridView extends VerticalLayout {
     private final File ROOT = new File("src/main/resources/file-storage");
     FileSystemDataProvider dataProvider = new FileSystemDataProvider(ROOT);
@@ -28,6 +29,7 @@ public class TreeGridView extends VerticalLayout {
     FileDataForm fileDataForm = new FileDataForm(() -> upgradeGrid());
 
     public TreeGridView() {
+        add(createPdfLayer());
         add(customizeGrid());
         add(uploadComponent);
         add(fileDataForm);
@@ -53,6 +55,11 @@ public class TreeGridView extends VerticalLayout {
         });
         treeGrid.addExpandListener(event -> upgradeGrid());
         treeGrid.addCollapseListener(event -> upgradeGrid());
+//        treeGrid.getClassNames().set("my-style1", true);
+        treeGrid.getColumns().forEach(fileColumn -> fileColumn
+                .getElement()
+                .getClassList()
+                .set("my-style1", true));
         return treeGrid;
     }
 
@@ -75,6 +82,16 @@ public class TreeGridView extends VerticalLayout {
         hl.add(htmlIcon);
         hl.add(new Label(fileName));
         return hl;
+    }
+
+    private HorizontalLayout createPdfLayer() {
+        HorizontalLayout hl = new HorizontalLayout();
+        Button createPdfButton = new Button("Create PDF");
+        createPdfButton.addClickListener(click -> {
+            new PdfCreator().createPdf();
+        });
+        hl.add(createPdfButton);
+        return  hl;
     }
 
 }
