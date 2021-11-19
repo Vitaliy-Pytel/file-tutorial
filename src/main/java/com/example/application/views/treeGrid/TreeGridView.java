@@ -89,6 +89,7 @@ public class TreeGridView extends VerticalLayout {
         Button createPdfButton = new Button("Create PDF");
         createPdfButton.addClickListener(click -> {
             new PdfCreator().createPdf(ROOT);
+            upgradeGrid();
         });
         hl.add(createPdfButton);
         return  hl;

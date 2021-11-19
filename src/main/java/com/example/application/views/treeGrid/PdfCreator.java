@@ -1,5 +1,6 @@
 package com.example.application.views.treeGrid;
 
+import org.apache.jempbox.xmp.XMPSchemaPagedText;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -18,14 +19,15 @@ import static java.util.stream.Collectors.*;
 public class PdfCreator {
     private final int LINES_COUNT = 40;
     private final File TARGET_FILE = new File("src/main/resources/file-storage/PDF/target-file.pdf");
-    File SOURCE_ROOT = new File("src/main/resources/file-storage/");
+    private final String AUTHOR = "Vitaliy Pytel";
+    private final String TITLE = "Test JEDI";
 
     public void createPdf(File source) {
-        List<File> fileNamesList = getFileList();
+        List<File> fileNamesList = getFileList(source);
         PDDocument document = new PDDocument();
         PDDocumentInformation documentInformation = document.getDocumentInformation();
-        documentInformation.setAuthor("Vitaliy Pytel");
-        documentInformation.setTitle("Test JEDI");
+        documentInformation.setAuthor(AUTHOR);
+        documentInformation.setTitle(TITLE);
         try {
             var listP = listOfPages(fileNamesList, LINES_COUNT);
             for (List<File> fileList : listP) {
@@ -36,13 +38,12 @@ public class PdfCreator {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    private List<File> getFileList() {
+    private List<File> getFileList(File source) {
         List<File> fileNamesList = new ArrayList<>();
         try {
-            fileNamesList = Files.walk(SOURCE_ROOT.toPath())
+            fileNamesList = Files.walk(source.toPath())
                     .map(Path::toFile)
                     .collect(toList());
         } catch (IOException e) {
@@ -58,7 +59,6 @@ public class PdfCreator {
 
     private void writePage(List<File> list, PDDocument document) throws IOException {
         PDPage page = new PDPage();
-
         document.addPage(page);
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
         //  -->>    start text
@@ -84,7 +84,7 @@ public class PdfCreator {
 
             internal.add(file);
             count++;
-            if (count % 20 == 0) {
+            if (count % lines == 0) {
                 pagedList.add(internal);
                 internal = new ArrayList<>();
             }
