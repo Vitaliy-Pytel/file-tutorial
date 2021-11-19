@@ -17,25 +17,21 @@ import static java.util.stream.Collectors.*;
 
 public class PdfCreator {
     private final int LINES_COUNT = 40;
+    private final File TARGET_FILE = new File("src/main/resources/file-storage/PDF/target-file.pdf");
+    File SOURCE_ROOT = new File("src/main/resources/file-storage/");
 
-    public void createPdf() {
-        File ROOT = new File("src/main/resources/file-storage/");
+    public void createPdf(File source) {
         List<File> fileNamesList = getFileList();
         PDDocument document = new PDDocument();
-
         PDDocumentInformation documentInformation = document.getDocumentInformation();
         documentInformation.setAuthor("Vitaliy Pytel");
-        documentInformation.setTitle("Test document");
-
+        documentInformation.setTitle("Test JEDI");
         try {
             var listP = listOfPages(fileNamesList, LINES_COUNT);
             for (List<File> fileList : listP) {
-                fileList.stream()
-                                .forEach(System.out::println);
-                System.out.println("-------------------------");
                 writePage(fileList, document);
             }
-            document.save(new File("src/main/resources/file-storage/PDF/formattedFileListText.pdf"));
+            document.save(TARGET_FILE);
             document.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -46,7 +42,7 @@ public class PdfCreator {
     private List<File> getFileList() {
         List<File> fileNamesList = new ArrayList<>();
         try {
-            fileNamesList = Files.walk(Path.of("/home/vitaliy/Util_Progs/Discord"))
+            fileNamesList = Files.walk(SOURCE_ROOT.toPath())
                     .map(Path::toFile)
                     .collect(toList());
         } catch (IOException e) {
@@ -85,12 +81,16 @@ public class PdfCreator {
         int count = 0;
         List<File> internal = new ArrayList<>();
         for (File file : fileList) {
+
             internal.add(file);
             count++;
             if (count % 20 == 0) {
                 pagedList.add(internal);
                 internal = new ArrayList<>();
             }
+        }
+        if (count < 20) {
+            pagedList.add(internal);
         }
         return pagedList;
     }
