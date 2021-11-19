@@ -1,10 +1,13 @@
 package com.example.application.views.treeGrid;
 
-import org.apache.jempbox.xmp.XMPSchemaPagedText;
+import be.quodlibet.boxable.BaseTable;
+import be.quodlibet.boxable.Row;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.File;
@@ -58,7 +61,7 @@ public class PdfCreator {
     }
 
     private void writePage(List<File> list, PDDocument document) throws IOException {
-        PDPage page = new PDPage();
+        PDPage page = new PDPage(PDRectangle.A4); // parameter that define type of leaf
         document.addPage(page);
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
         //  -->>    start text
